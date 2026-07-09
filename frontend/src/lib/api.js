@@ -1,8 +1,8 @@
 const API_BASE = typeof window !== 'undefined'
     ? (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
         ? 'http://' + window.location.hostname + ':3102'
-        : '/api')
-    : (process.env.NEXT_PUBLIC_API_URL || '/api');
+        : '')
+    : (process.env.NEXT_PUBLIC_API_URL || '');
 
 export async function fetchApi(path, options = {}) {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -16,7 +16,8 @@ export async function fetchApi(path, options = {}) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${API_BASE}${path}`, {
+    const url = `${API_BASE}${path}`.replace('/api/api/', '/api/');
+    const res = await fetch(url, {
         ...options,
         headers,
     });
