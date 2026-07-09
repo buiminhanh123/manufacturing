@@ -1,0 +1,12 @@
+{
+  "name": "manufacturing",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "server"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=frontend"
+  }
+}
