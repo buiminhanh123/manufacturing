@@ -10,7 +10,7 @@ export default function NvlPage() {
     const [records, setRecords] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [toasts, setToasts] = useState([]);
-    
+
     // Modal states
     const [showModal, setShowModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -49,7 +49,7 @@ export default function NvlPage() {
     const filteredRecords = useMemo(() => {
         if (!searchTerm) return records;
         const term = searchTerm.toLowerCase();
-        return records.filter(r => 
+        return records.filter(r =>
             (r.ten_nvl || '').toLowerCase().includes(term) ||
             (r.ma_nvl || '').toLowerCase().includes(term) ||
             (r.quy_cach || '').toLowerCase().includes(term) ||
@@ -176,8 +176,8 @@ export default function NvlPage() {
                 </div>
 
                 {/* Data Table */}
-                <div className="table-wrapper">
-                    <table className="table">
+                <div className="table-wrapper" style={{ height: 'calc(100vh - 230px)', overflowY: 'auto' }}>
+                    <table className="table" style={{ fontSize: '13px' }}>
                         <thead>
                             <tr>
                                 <th style={{ width: 50 }}>#</th>
@@ -198,26 +198,21 @@ export default function NvlPage() {
                             ) : filteredRecords.length === 0 ? (
                                 <tr><td colSpan={10} style={{ textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>Không tìm thấy vật tư nào</td></tr>
                             ) : filteredRecords.map((r, i) => {
-                                const isLowStock = r.ton_kho_hien_tai < r.min_inventory;
                                 return (
-                                    <tr key={r.id} style={{ background: isLowStock ? 'rgba(239, 68, 68, 0.03)' : '' }}>
+                                    <tr key={r.id}>
                                         <td style={{ color: 'var(--text-muted)' }}>{i + 1}</td>
-                                        <td style={{ fontWeight: 700, color: isLowStock ? 'var(--danger)' : 'var(--text-primary)' }}>{r.ma_nvl}</td>
-                                        <td style={{ fontWeight: 600 }}>{r.ten_nvl}</td>
+                                        <td style={{ color: 'var(--text-primary)' }}>{r.ma_nvl}</td>
+                                        <td>{r.ten_nvl}</td>
                                         <td>{r.quy_cach || '-'}</td>
                                         <td style={{ textAlign: 'center' }}>
-                                            <span className="badge badge-secondary">{r.dvt}</span>
+                                            {r.dvt}
                                         </td>
                                         <td style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>{r.ton_kho_ban_dau}</td>
-                                        <td style={{ 
-                                            textAlign: 'right', 
-                                            fontWeight: 700, 
-                                            color: isLowStock ? 'var(--danger)' : '#059669' 
+                                        <td style={{
+                                            textAlign: 'right',
+                                            color: '#059669'
                                         }}>
-                                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                                                {isLowStock && <AlertTriangle size={14} color="var(--danger)" />}
-                                                {r.ton_kho_hien_tai}
-                                            </div>
+                                            {r.ton_kho_hien_tai}
                                         </td>
                                         <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{r.min_inventory}</td>
                                         <td style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{r.ghi_chu || '-'}</td>
@@ -250,14 +245,14 @@ export default function NvlPage() {
                             </h3>
                             <button className="modal-close" onClick={() => setShowModal(false)}><X size={20} /></button>
                         </div>
-                        
+
                         <form onSubmit={handleSubmit}>
                             <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">Mã vật tư (Bỏ trống để tạo tự động)</label>
-                                    <input 
-                                        className="form-input" 
-                                        placeholder="Ví dụ: NVL-001" 
+                                    <input
+                                        className="form-input"
+                                        placeholder="Ví dụ: NVL-001"
                                         value={formData.ma_nvl}
                                         onChange={e => setFormData({ ...formData, ma_nvl: e.target.value })}
                                         disabled={isEditMode}
@@ -265,12 +260,12 @@ export default function NvlPage() {
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Tên vật tư</label>
-                                    <input 
-                                        className="form-input" 
-                                        placeholder="Nhập tên vật tư..." 
+                                    <input
+                                        className="form-input"
+                                        placeholder="Nhập tên vật tư..."
                                         value={formData.ten_nvl}
                                         onChange={e => setFormData({ ...formData, ten_nvl: e.target.value })}
-                                        required 
+                                        required
                                     />
                                 </div>
                             </div>
@@ -278,21 +273,21 @@ export default function NvlPage() {
                             <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">Quy cách</label>
-                                    <input 
-                                        className="form-input" 
-                                        placeholder="Ví dụ: 20kg/Thùng" 
+                                    <input
+                                        className="form-input"
+                                        placeholder="Ví dụ: 20kg/Thùng"
                                         value={formData.quy_cach}
                                         onChange={e => setFormData({ ...formData, quy_cach: e.target.value })}
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Đơn vị tính (ĐVT)</label>
-                                    <input 
-                                        className="form-input" 
-                                        placeholder="Ví dụ: Thùng, Lon, kg..." 
+                                    <input
+                                        className="form-input"
+                                        placeholder="Ví dụ: Thùng, Lon, kg..."
                                         value={formData.dvt}
                                         onChange={e => setFormData({ ...formData, dvt: e.target.value })}
-                                        required 
+                                        required
                                     />
                                 </div>
                             </div>
@@ -300,11 +295,11 @@ export default function NvlPage() {
                             <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">Tồn kho ban đầu</label>
-                                    <input 
-                                        className="form-input" 
+                                    <input
+                                        className="form-input"
                                         type="number"
                                         step="any"
-                                        placeholder="0" 
+                                        placeholder="0"
                                         value={formData.ton_kho_ban_dau}
                                         onChange={e => setFormData({ ...formData, ton_kho_ban_dau: parseFloat(e.target.value || 0) })}
                                         disabled={isEditMode}
@@ -312,11 +307,11 @@ export default function NvlPage() {
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Ngưỡng báo động tồn tối thiểu</label>
-                                    <input 
-                                        className="form-input" 
+                                    <input
+                                        className="form-input"
                                         type="number"
                                         step="any"
-                                        placeholder="10" 
+                                        placeholder="10"
                                         value={formData.min_inventory}
                                         onChange={e => setFormData({ ...formData, min_inventory: parseFloat(e.target.value || 0) })}
                                         required
@@ -326,9 +321,9 @@ export default function NvlPage() {
 
                             <div className="form-group">
                                 <label className="form-label">Ghi chú</label>
-                                <textarea 
-                                    className="form-input" 
-                                    placeholder="Ghi chú thêm..." 
+                                <textarea
+                                    className="form-input"
+                                    placeholder="Ghi chú thêm..."
                                     rows={3}
                                     value={formData.ghi_chu}
                                     onChange={e => setFormData({ ...formData, ghi_chu: e.target.value })}

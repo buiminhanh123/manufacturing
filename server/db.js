@@ -172,6 +172,20 @@ async function initDatabase() {
         )
     `);
 
+    // 10. Phiếu nhập xuất kho (Tickets)
+    db.run(`
+        CREATE TABLE IF NOT EXISTS phieu (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ma_phieu TEXT UNIQUE NOT NULL,
+            type TEXT NOT NULL, -- 'IN_NVL', 'OUT_NVL', 'IN_SP', 'OUT_SP'
+            date TEXT NOT NULL,
+            notes TEXT DEFAULT '',
+            created_by INTEGER REFERENCES users(id),
+            created_at TEXT DEFAULT (datetime('now')),
+            updated_at TEXT DEFAULT (datetime('now'))
+        )
+    `);
+
     // Migrate existing table to add ty_le_hao_hut if it doesn't exist
     try {
         db.run('ALTER TABLE dinh_muc ADD COLUMN ty_le_hao_hut REAL DEFAULT 0');
@@ -187,6 +201,14 @@ async function initDatabase() {
     } catch (err) {}
     try {
         db.run('ALTER TABLE lenh_san_xuat ADD COLUMN ngay_ket_thuc TEXT DEFAULT ""');
+    } catch (err) {}
+
+    // Migrations to add phieu_id to transaction tables
+    try {
+        db.run('ALTER TABLE nvl_transactions ADD COLUMN phieu_id INTEGER REFERENCES phieu(id) ON DELETE CASCADE');
+    } catch (err) {}
+    try {
+        db.run('ALTER TABLE sp_transactions ADD COLUMN phieu_id INTEGER REFERENCES phieu(id) ON DELETE CASCADE');
     } catch (err) {}
 
     // Seed default admin user

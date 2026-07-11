@@ -35,6 +35,10 @@ app.use('/api/dinh-muc', requireAuth, dinhMucRoutes);
 const userRoutes = require('./routes/users.routes');
 app.use('/api/users', requireAuth, requireAdmin, userRoutes);
 
+// Phieu (tickets) routes
+const phieuRoutes = require('./routes/phieu.routes');
+app.use('/api/phieu', requireAuth, phieuRoutes);
+
 // API 404
 app.all('/api/{*splat}', (req, res) => {
     res.status(404).json({ error: 'API endpoint not found' });

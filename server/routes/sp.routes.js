@@ -122,7 +122,7 @@ router.delete('/:id', (req, res) => {
 router.get('/transactions/all', (req, res) => {
     try {
         const rows = queryAll(`
-            SELECT t.id, t.sp_id, s.ma_sp, s.ten_sp, s.bo_phan, t.type, t.quantity, t.date, t.reference, t.notes, u.display_name as creator_name
+            SELECT t.id, t.sp_id, s.ma_sp, s.ten_sp, s.bo_phan, t.type, t.quantity, t.date, t.reference, t.notes, u.display_name as creator_name, t.phieu_id
             FROM sp_transactions t
             JOIN san_pham s ON t.sp_id = s.id
             LEFT JOIN users u ON t.created_by = u.id

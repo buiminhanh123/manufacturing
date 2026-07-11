@@ -12,7 +12,7 @@ export default function SanPhamPage() {
     const [filterBoPhan, setFilterBoPhan] = useState('');
     const [filterLoaiXe, setFilterLoaiXe] = useState('');
     const [toasts, setToasts] = useState([]);
-    
+
     // Modal states
     const [showModal, setShowModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -80,7 +80,7 @@ export default function SanPhamPage() {
 
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
-            list = list.filter(r => 
+            list = list.filter(r =>
                 (r.ten_sp || '').toLowerCase().includes(term) ||
                 (r.ma_sp || '').toLowerCase().includes(term) ||
                 (r.nguoi_phu_trach || '').toLowerCase().includes(term) ||
@@ -227,20 +227,20 @@ export default function SanPhamPage() {
                 </div>
 
                 {/* Data Table */}
-                <div className="table-wrapper">
-                    <table className="table">
+                <div className="table-wrapper" style={{ height: 'calc(100vh - 220px)', overflowY: 'auto' }}>
+                    <table className="table" style={{ fontSize: '13px' }}>
                         <thead>
                             <tr>
-                                <th style={{ width: 50 }}>#</th>
-                                <th>Mã SP</th>
-                                <th>Tên sản phẩm (Chi tiết)</th>
-                                <th>Loại xe</th>
-                                <th>Bộ phận sản xuất</th>
-                                <th>Người phụ trách</th>
-                                <th style={{ textAlign: 'right' }}>Tồn ban đầu</th>
-                                <th style={{ textAlign: 'right' }}>Tồn hiện tại</th>
+                                <th style={{ width: 40 }}>#</th>
+                                <th style={{ width: '30%' }}>Mã SP</th>
+                                <th style={{ width: '50%' }}>Tên sản phẩm (Chi tiết)</th>
+                                <th style={{ width: '100px' }}>Loại xe</th>
+                                <th style={{ width: '150px' }}>Bộ phận sản xuất</th>
+                                <th style={{ width: '100px' }}>Người phụ trách</th>
+                                <th style={{ textAlign: 'right', width: '90px' }}>Tồn ban đầu</th>
+                                <th style={{ textAlign: 'right', width: '90px' }}>Tồn hiện tại</th>
                                 <th>Ghi chú</th>
-                                <th style={{ textAlign: 'center', width: 100 }}>Thao tác</th>
+                                <th style={{ textAlign: 'center', width: 90 }}>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -251,22 +251,17 @@ export default function SanPhamPage() {
                             ) : filteredRecords.map((r, i) => (
                                 <tr key={r.id}>
                                     <td style={{ color: 'var(--text-muted)' }}>{i + 1}</td>
-                                    <td style={{ fontWeight: 700 }}>{r.ma_sp}</td>
-                                    <td style={{ fontWeight: 600 }}>{r.ten_sp}</td>
+                                    <td>{r.ma_sp}</td>
+                                    <td>{r.ten_sp}</td>
                                     <td>
-                                        {r.loai_xe ? (
-                                            r.loai_xe.split(',').map(tag => (
-                                                <span key={tag} className="badge badge-info" style={{ marginRight: 4, display: 'inline-block', marginBottom: 2 }}>{tag.trim()}</span>
-                                            ))
-                                        ) : '-'}
+                                        {r.loai_xe || '-'}
                                     </td>
                                     <td>{r.bo_phan || '-'}</td>
-                                    <td style={{ fontWeight: 500, color: 'var(--accent)' }}>{r.nguoi_phu_trach || '-'}</td>
+                                    <td>{r.nguoi_phu_trach || '-'}</td>
                                     <td style={{ textAlign: 'right', color: 'var(--text-secondary)' }}>{r.ton_kho_ban_dau}</td>
-                                    <td style={{ 
-                                        textAlign: 'right', 
-                                        fontWeight: 700, 
-                                        color: r.ton_kho_hien_tai > 0 ? '#059669' : 'var(--text-muted)' 
+                                    <td style={{
+                                        textAlign: 'right',
+                                        color: '#059669'
                                     }}>
                                         {r.ton_kho_hien_tai}
                                     </td>
@@ -299,14 +294,14 @@ export default function SanPhamPage() {
                             </h3>
                             <button className="modal-close" onClick={() => setShowModal(false)}><X size={20} /></button>
                         </div>
-                        
+
                         <form onSubmit={handleSubmit}>
                             <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">Mã sản phẩm (Bỏ trống để tạo tự động)</label>
-                                    <input 
-                                        className="form-input" 
-                                        placeholder="Ví dụ: SP-001" 
+                                    <input
+                                        className="form-input"
+                                        placeholder="Ví dụ: SP-001"
                                         value={formData.ma_sp}
                                         onChange={e => setFormData({ ...formData, ma_sp: e.target.value })}
                                         disabled={isEditMode}
@@ -314,12 +309,12 @@ export default function SanPhamPage() {
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Tên sản phẩm</label>
-                                    <input 
-                                        className="form-input" 
-                                        placeholder="Nhập tên sản phẩm..." 
+                                    <input
+                                        className="form-input"
+                                        placeholder="Nhập tên sản phẩm..."
                                         value={formData.ten_sp}
                                         onChange={e => setFormData({ ...formData, ten_sp: e.target.value })}
-                                        required 
+                                        required
                                     />
                                 </div>
                             </div>
@@ -327,18 +322,18 @@ export default function SanPhamPage() {
                             <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">Loại xe</label>
-                                    <input 
-                                        className="form-input" 
-                                        placeholder="Ví dụ: KN, KG, UN hoặc KN, GL..." 
+                                    <input
+                                        className="form-input"
+                                        placeholder="Ví dụ: KN, KG, UN hoặc KN, GL..."
                                         value={formData.loai_xe}
                                         onChange={e => setFormData({ ...formData, loai_xe: e.target.value })}
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Bộ phận sản xuất</label>
-                                    <input 
-                                        className="form-input" 
-                                        placeholder="Ví dụ: HÚT NỘI THẤT, CHẤM NHỰA..." 
+                                    <input
+                                        className="form-input"
+                                        placeholder="Ví dụ: HÚT NỘI THẤT, CHẤM NHỰA..."
                                         value={formData.bo_phan}
                                         onChange={e => setFormData({ ...formData, bo_phan: e.target.value })}
                                     />
@@ -348,19 +343,19 @@ export default function SanPhamPage() {
                             <div className="form-row">
                                 <div className="form-group">
                                     <label className="form-label">Người phụ trách sản xuất</label>
-                                    <input 
-                                        className="form-input" 
-                                        placeholder="Ví dụ: MAL, CHINH, A HÙNG..." 
+                                    <input
+                                        className="form-input"
+                                        placeholder="Ví dụ: MAL, CHINH, A HÙNG..."
                                         value={formData.nguoi_phu_trach}
                                         onChange={e => setFormData({ ...formData, nguoi_phu_trach: e.target.value })}
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Tồn kho ban đầu</label>
-                                    <input 
-                                        className="form-input" 
+                                    <input
+                                        className="form-input"
                                         type="number"
-                                        placeholder="0" 
+                                        placeholder="0"
                                         value={formData.ton_kho_ban_dau}
                                         onChange={e => setFormData({ ...formData, ton_kho_ban_dau: parseFloat(e.target.value || 0) })}
                                         disabled={isEditMode}
@@ -370,9 +365,9 @@ export default function SanPhamPage() {
 
                             <div className="form-group">
                                 <label className="form-label">Ghi chú</label>
-                                <textarea 
-                                    className="form-input" 
-                                    placeholder="Ghi chú thêm..." 
+                                <textarea
+                                    className="form-input"
+                                    placeholder="Ghi chú thêm..."
                                     rows={2}
                                     value={formData.ghi_chu}
                                     onChange={e => setFormData({ ...formData, ghi_chu: e.target.value })}
