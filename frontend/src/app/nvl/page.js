@@ -1,8 +1,8 @@
 'use client';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { fetchApi } from '@/lib/api';
-import { Search, Plus, Trash2, Edit, X, AlertTriangle } from 'lucide-react';
+import { Search, Plus, Trash2, Edit, X, AlertTriangle, Download, Upload } from 'lucide-react';
 
 export default function NvlPage() {
     const { hasPermission } = useAuth();
@@ -10,6 +10,80 @@ export default function NvlPage() {
     const [records, setRecords] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [toasts, setToasts] = useState([]);
+    
+    const fileInputRef = useRef(null);
+    const [importing, setImporting] = useState(false);
+
+    const handleDownloadTemplate = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const API_BASE = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
+                ? 'http://' + window.location.hostname + ':3102'
+                : '';
+            const url = `${API_BASE}/api/nvl/template`;
+            
+            const res = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (!res.ok) {
+                throw new Error('Không thể tải file mẫu');
+            }
+            
+            const blob = await res.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = 'mau_import_nvl.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(downloadUrl);
+            toast('Tải file mẫu thành công');
+        } catch (err) {
+            toast('Lỗi tải file mẫu: ' + err.message, 'error');
+        }
+    };
+
+    const handleImportExcel = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        
+        setImporting(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        try {
+            const token = localStorage.getItem('token');
+            const API_BASE = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
+                ? 'http://' + window.location.hostname + ':3102'
+                : '';
+            const url = `${API_BASE}/api/nvl/import`;
+            
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+            
+            const result = await res.json();
+            if (!res.ok) {
+                throw new Error(result.error || 'Import thất bại');
+            }
+            
+            toast(result.message || 'Import dữ liệu thành công!');
+            loadData();
+        } catch (err) {
+            toast(err.message, 'error');
+        } finally {
+            setImporting(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+    };
 
     // Modal states
     const [showModal, setShowModal] = useState(false);
@@ -149,7 +223,29 @@ export default function NvlPage() {
                     <h2>Nguyên Vật Liệu</h2>
                     <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 4 }}>Danh sách các vật tư, quy cách và tồn kho hiện có</p>
                 </div>
-                <div style={{ display: 'flex', gap: 10 }}>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        onChange={handleImportExcel} 
+                        accept=".xlsx,.xls" 
+                        style={{ display: 'none' }} 
+                    />
+                    <button 
+                        className="btn btn-secondary" 
+                        onClick={handleDownloadTemplate} 
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}
+                    >
+                        <Download size={16} /> Tải file mẫu
+                    </button>
+                    <button 
+                        className="btn btn-secondary" 
+                        onClick={() => fileInputRef.current?.click()} 
+                        disabled={importing}
+                        style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}
+                    >
+                        <Upload size={16} /> {importing ? 'Đang import...' : 'Import Excel'}
+                    </button>
                     <button className="btn btn-primary" onClick={handleOpenAddModal} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <Plus size={16} /> Thêm vật tư mới
                     </button>
