@@ -239,7 +239,7 @@ export default function NvlPage() {
                         <Download size={16} /> Tải file mẫu
                     </button>
                     <button 
-                        className="btn btn-secondary" 
+                        className="btn btn-success" 
                         onClick={() => fileInputRef.current?.click()} 
                         disabled={importing}
                         style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}
