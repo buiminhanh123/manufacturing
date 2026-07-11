@@ -7,7 +7,8 @@ const router = express.Router();
 router.get('/', (req, res) => {
     try {
         const rows = queryAll(`
-            SELECT id, ma_sp, ten_sp, loai_xe, bo_phan, nguoi_phu_trach, ghi_chu, ton_kho_ban_dau, ton_kho_hien_tai
+            SELECT id, ma_sp, ten_sp, loai_xe, bo_phan, nguoi_phu_trach, ghi_chu, ton_kho_ban_dau, ton_kho_hien_tai,
+                   (SELECT COUNT(*) FROM dinh_muc WHERE sp_id = san_pham.id) as bom_count
             FROM san_pham
             ORDER BY id ASC
         `);

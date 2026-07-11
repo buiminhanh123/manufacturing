@@ -39,7 +39,7 @@ export default function DinhMucPage() {
             const data = await fetchApi('/api/san-pham');
             setProducts(data || []);
             if (data && data.length > 0) {
-                setSelectedSpId(data[0].id);
+                setSelectedSpId(prev => prev || data[0].id);
             }
         } catch (err) {
             toast('Lỗi tải sản phẩm: ' + err.message, 'error');
@@ -84,13 +84,21 @@ export default function DinhMucPage() {
     }, [selectedSpId, products]);
 
     const filteredProducts = useMemo(() => {
-        if (!productSearch) return products;
-        const term = productSearch.toLowerCase();
-        return products.filter(p =>
-            (p.ten_sp || '').toLowerCase().includes(term) ||
-            (p.ma_sp || '').toLowerCase().includes(term) ||
-            (p.loai_xe || '').toLowerCase().includes(term)
-        );
+        let list = [...products];
+        if (productSearch) {
+            const term = productSearch.toLowerCase();
+            list = list.filter(p =>
+                (p.ten_sp || '').toLowerCase().includes(term) ||
+                (p.ma_sp || '').toLowerCase().includes(term) ||
+                (p.loai_xe || '').toLowerCase().includes(term)
+            );
+        }
+        // Sort: products with bom_count === 0 (or undefined) first, then products with bom_count > 0
+        return list.sort((a, b) => {
+            const aHas = (a.bom_count || 0) > 0 ? 1 : 0;
+            const bHas = (b.bom_count || 0) > 0 ? 1 : 0;
+            return aHas - bHas;
+        });
     }, [products, productSearch]);
 
     const filteredMaterials = useMemo(() => {
@@ -159,6 +167,7 @@ export default function DinhMucPage() {
             toast('Lưu định mức thành công');
             setShowModal(false);
             loadBom(selectedSpId);
+            loadProducts();
         } catch (err) {
             toast(err.message, 'error');
         }
@@ -170,6 +179,7 @@ export default function DinhMucPage() {
             await fetchApi(`/api/dinh-muc/${bomId}`, { method: 'DELETE' });
             toast('Đã xóa định mức vật tư');
             loadBom(selectedSpId);
+            loadProducts();
         } catch (err) {
             toast(err.message, 'error');
         }
@@ -239,7 +249,7 @@ export default function DinhMucPage() {
                                     <div style={{ 
                                           fontWeight: 600, 
                                           fontSize: 13, 
-                                          color: selectedSpId === p.id ? 'var(--accent)' : 'var(--text-primary)',
+                                          color: p.bom_count > 0 ? 'var(--text-primary)' : '#ef4444',
                                           whiteSpace: 'nowrap',
                                           overflow: 'hidden',
                                           textOverflow: 'ellipsis'
