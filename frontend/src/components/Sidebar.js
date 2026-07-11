@@ -15,7 +15,8 @@ import {
     LogOut, 
     Briefcase, 
     ChevronLeft, 
-    ChevronRight 
+    ChevronRight,
+    Users
 } from 'lucide-react';
 
 const menuItems = [
@@ -26,6 +27,7 @@ const menuItems = [
     { key: 'nvl-transactions',label: 'Nhập xuất NVL',       icon: <ArrowLeftRight size={20} />,  path: '/nvl/transactions' },
     { key: 'san-pham',        label: 'Sản phẩm',            icon: <ShoppingBag size={20} />,     path: '/san-pham' },
     { key: 'sp-transactions', label: 'Nhập xuất SP',         icon: <Repeat2 size={20} />,         path: '/san-pham/transactions' },
+    { key: 'users',           label: 'Quản lý tài khoản',   icon: <Users size={20} />,           path: '/users' },
 ];
 
 export default function Sidebar() {

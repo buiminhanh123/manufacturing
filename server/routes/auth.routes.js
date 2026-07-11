@@ -12,7 +12,8 @@ const ALL_PERMISSIONS = [
     'san-pham',
     'sp-transactions',
     'dinh-muc',
-    'tinh-toan'
+    'tinh-toan',
+    'users'
 ];
 
 /**

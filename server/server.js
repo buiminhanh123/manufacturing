@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { requireAuth } = require('./auth');
+const { requireAuth, requireAdmin } = require('./auth');
 const { initDatabase } = require('./db');
 
 const app = express();
@@ -30,6 +30,10 @@ app.use('/api/san-pham', requireAuth, spRoutes);
 // Dinh Muc & Tinh Toan routes
 const dinhMucRoutes = require('./routes/dinh_muc.routes');
 app.use('/api/dinh-muc', requireAuth, dinhMucRoutes);
+
+// Users routes (Admin only)
+const userRoutes = require('./routes/users.routes');
+app.use('/api/users', requireAuth, requireAdmin, userRoutes);
 
 // API 404
 app.all('/api/{*splat}', (req, res) => {
